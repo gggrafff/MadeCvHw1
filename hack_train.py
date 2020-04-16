@@ -14,6 +14,7 @@ import tqdm
 from torch.nn import functional as fnn
 from torch.utils import data
 from torchvision import transforms
+from torch.optim.lr_scheduler import StepLR, ReduceLROnPlateau
 
 from hack_utils import NUM_PTS, CROP_SIZE
 from hack_utils import ScaleMinSideToSize, CropCenter, TransformByKeys
@@ -114,6 +115,7 @@ def main(args):
 
     optimizer = optim.Adam(model.parameters(), lr=args.learning_rate, amsgrad=True)
     loss_fn = fnn.mse_loss
+    lr_scheduler = ReduceLROnPlateau(optimizer)
 
     # 2. train & validate
     print("Ready for training...")
@@ -126,6 +128,7 @@ def main(args):
             best_val_loss = val_loss
             with open(f"{args.name}_best.pth", "wb") as fp:
                 torch.save(model.state_dict(), fp)
+        lr_scheduler.step(train_loss)
 
     # 3. predict
     test_dataset = ThousandLandmarksDataset(os.path.join(args.data, 'test'), train_transforms, split="test")
