@@ -109,8 +109,10 @@ def main(args):
 
     print("Creating model...")
     device = torch.device("cuda: 0") if args.gpu else torch.device("cpu")
-    model = models.resnet18(pretrained=True)
-    model.fc = nn.Linear(model.fc.in_features, 2 * NUM_PTS, bias=True)
+    #model = models.resnet18(pretrained=True)
+    #model.fc = nn.Linear(model.fc.in_features, 2 * NUM_PTS, bias=True)
+    model = models.densenet161(pretrained=True)
+    model.classifier = nn.Linear(model.classifier.in_features, 2 * NUM_PTS, bias=True)
     model.to(device)
 
     optimizer = optim.Adam(model.parameters(), lr=args.learning_rate, amsgrad=True)
