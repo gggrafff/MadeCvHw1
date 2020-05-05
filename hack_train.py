@@ -15,6 +15,8 @@ from torch.nn import functional as fnn
 from torch.utils import data
 from torchvision import transforms
 from torch.optim.lr_scheduler import StepLR, ReduceLROnPlateau
+from efficientnet_pytorch import EfficientNet
+from radam import RAdam
 
 from hack_utils import NUM_PTS, CROP_SIZE
 from hack_utils import ScaleMinSideToSize, CropCenter, TransformByKeys
@@ -111,11 +113,18 @@ def main(args):
     device = torch.device("cuda: 0") if args.gpu else torch.device("cpu")
     #model = models.resnet18(pretrained=True)
     #model.fc = nn.Linear(model.fc.in_features, 2 * NUM_PTS, bias=True)
-    model = models.densenet161(pretrained=True)
-    model.classifier = nn.Linear(model.classifier.in_features, 2 * NUM_PTS, bias=True)
+
+    #model = models.densenet161(pretrained=True)
+    #model.classifier = nn.Linear(model.classifier.in_features, 2 * NUM_PTS, bias=True)
+
+    model = EfficientNet.from_pretrained('efficientnet-b3')
+    model._fc = nn.Linear(model._fc.in_features, 2 * NUM_PTS, bias=True)
+
     model.to(device)
 
-    optimizer = optim.Adam(model.parameters(), lr=args.learning_rate, amsgrad=True)
+    #optimizer = optim.Adam(model.parameters(), lr=args.learning_rate, amsgrad=True)
+    optimizer = RAdam(model.parameters(), lr=args.learning_rate)
+
     loss_fn = fnn.mse_loss
     lr_scheduler = ReduceLROnPlateau(optimizer)
 
