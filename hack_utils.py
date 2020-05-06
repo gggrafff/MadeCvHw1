@@ -1,5 +1,5 @@
 import os
-import tqdm
+#import tqdm
 import cv2
 import numpy as np
 import pandas as pd
@@ -97,7 +97,7 @@ class ThousandLandmarksDataset(data.Dataset):
         num_lines -= 1  # header
 
         with open(landmark_file_name, "rt") as fp:
-            for i, line in tqdm.tqdm(enumerate(fp)):
+            for i, line in enumerate(fp):
                 if i == 0:
                     continue  # skip header
                 if split == "train" and i == int(TRAIN_SIZE * num_lines):
