@@ -117,8 +117,7 @@ def main(args):
     #model = models.densenet161(pretrained=True)
     #model.classifier = nn.Linear(model.classifier.in_features, 2 * NUM_PTS, bias=True)
 
-    model = EfficientNet.from_pretrained('efficientnet-b3')
-    model._fc = nn.Linear(model._fc.in_features, 2 * NUM_PTS, bias=True)
+    model = EfficientNet.from_pretrained('efficientnet-b3', num_classes=2*NUM_PTS)
 
     model.to(device)
 
