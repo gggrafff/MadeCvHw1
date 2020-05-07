@@ -16,7 +16,7 @@ from torch.utils import data
 from torchvision import transforms
 from torch.optim.lr_scheduler import StepLR, ReduceLROnPlateau
 from efficientnet_pytorch import EfficientNet
-#from radam import RAdam
+from radam import RAdam
 
 from hack_utils import NUM_PTS, CROP_SIZE
 from hack_utils import ScaleMinSideToSize, CropCenter, TransformByKeys
@@ -117,7 +117,7 @@ def main(args):
     #model = models.densenet161(pretrained=True)
     #model.classifier = nn.Linear(model.classifier.in_features, 2 * NUM_PTS, bias=True)
 
-    model = EfficientNet.from_pretrained('efficientnet-b3', num_classes=2*NUM_PTS)
+    model = EfficientNet.from_pretrained('efficientnet-b4', num_classes=2*NUM_PTS)
 
     model.to(device)
 
