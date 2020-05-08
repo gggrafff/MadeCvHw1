@@ -90,6 +90,9 @@ def predict(model, loader, device):
 
     return predictions
 
+def get_lr(optimizer):
+    for param_group in optimizer.param_groups:
+        return param_group['lr']
 
 def main(args):
     # 1. prepare data & models
@@ -119,10 +122,15 @@ def main(args):
 
     model = EfficientNet.from_pretrained('efficientnet-b4', num_classes=2*NUM_PTS)
 
+    if args.oldname:
+    	with open(f"{args.oldname}_best.pth", "rb") as fp:
+	        best_state_dict = torch.load(fp, map_location="cpu")
+	        model.load_state_dict(best_state_dict)
+
     model.to(device)
 
     #optimizer = optim.Adam(model.parameters(), lr=args.learning_rate, amsgrad=True)
-    optimizer = RAdam(model.parameters())
+    optimizer = RAdam(model.parameters(), lr=args.learning_rate)
 
     loss_fn = fnn.mse_loss
     lr_scheduler = ReduceLROnPlateau(optimizer)
@@ -133,7 +141,7 @@ def main(args):
     for epoch in range(args.epochs):
         train_loss = train(model, train_dataloader, loss_fn, optimizer, device=device)
         val_loss = validate(model, val_dataloader, loss_fn, device=device)
-        print("Epoch #{:2}:\ttrain loss: {:5.2}\tval loss: {:5.2}".format(epoch, train_loss, val_loss))
+        print("Epoch #{:2}:\ttrain loss: {:5.2}\tval loss: {:5.2}\tlr: {:5.2}".format(epoch, train_loss, val_loss, get_lr(optimizer)))
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             with open(f"{args.name}_best.pth", "wb") as fp:
