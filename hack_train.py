@@ -31,6 +31,8 @@ def parse_arguments():
     parser = ArgumentParser(__doc__)
     parser.add_argument("--name", "-n", help="Experiment name (for saving checkpoints and submits).",
                         default="baseline")
+    parser.add_argument("--oldname", "-on", help="Old experiment name (for loading checkpoint).",
+                        default="")
     parser.add_argument("--data", "-d", help="Path to dir with target images & landmarks.", default=None)
     parser.add_argument("--batch-size", "-b", default=512, type=int)  # 512 is OK for resnet18 finetune @ 6Gb of VRAM
     parser.add_argument("--epochs", "-e", default=1, type=int)
