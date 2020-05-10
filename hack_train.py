@@ -148,6 +148,7 @@ def main(args):
             best_val_loss = val_loss
             with open(f"{args.name}_best.pth", "wb") as fp:
                 torch.save(model.state_dict(), fp)
+            os.system('cp /content/MadeCvHw1/{args.name}_best.pth "/content/drive/My Drive/MADE/CV_HW1/"')
         lr_scheduler.step(train_loss)
 
     # 3. predict
